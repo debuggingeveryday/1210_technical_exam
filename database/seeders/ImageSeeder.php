@@ -3,20 +3,15 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Task;
 use App\Models\Images;
 
-class TaskSeeder extends Seeder
+class ImageSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $task = Task::factory()->create();
-
-        Images::factory()->create([
-            'task_id' => $task->id
-        ]);
+        Images::factory()->create();
     }
 }
