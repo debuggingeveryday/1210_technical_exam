@@ -15,7 +15,7 @@ class TaskSeeder extends Seeder
     {
         $task = Task::factory()->create();
 
-        Images::factory()->create([
+        Images::factory(50)->create([
             'task_id' => $task->id
         ]);
     }

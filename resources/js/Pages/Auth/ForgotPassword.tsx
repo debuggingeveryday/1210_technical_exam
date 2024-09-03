@@ -1,3 +1,4 @@
+import React from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -10,8 +11,8 @@ export default function ForgotPassword({ status }: { status?: string }) {
         email: '',
     });
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+    const submit: FormEventHandler = (event) => {
+        event.preventDefault();
 
         post(route('password.email'));
     };

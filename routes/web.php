@@ -23,4 +23,7 @@ Route::get('/', function () {
 Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 Route::resource('/task', TaskController::class)->middleware(['auth', 'verified']);
 
+/* for testing */
+Route::get('/test', fn () => Inertia::render('Test'));
+
 require __DIR__.'/auth.php';
