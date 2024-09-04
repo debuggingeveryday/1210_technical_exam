@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskRequest;
 use App\Models\Images;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use App\Http\Requests\TaskUpdateStatusRequest;
 
 class TaskController extends Controller
 {
@@ -17,9 +19,12 @@ class TaskController extends Controller
         $filter_by_title = $request->query('filterByTitle') ?? '';
         $filter_by_created_user = $request->query('filterByCreatedUser') ?? '';
         $filter_by_assigned_user = $request->query('filterByAssignedUser') ?? '';
+        $publish = $request->query('publish') ?? '';
         $status = $request->query('status') ?? '';
         $sort_by = $request->query('sortBy');
         $order_by = $request->query('orderBy') ?? 'DESC';
+
+        $is_published = $publish === 'published' ? true : false;
 
         $data = Task::select(
             'tasks.id',
@@ -34,10 +39,11 @@ class TaskController extends Controller
         )
             ->with(['createdByUserId', 'assignedByUserId'])
             ->when($filter_by_title, fn ($query) => $query->where('title', 'LIKE', "%{$filter_by_title}%"))
-            ->when($filter_by_created_user || $filter_by_assigned_user || $status, function ($query) use ($filter_by_assigned_user, $status, $filter_by_created_user) {
+            ->when($filter_by_created_user || $filter_by_assigned_user || $status, function ($query) use ($is_published, $filter_by_assigned_user, $status, $filter_by_created_user) {
                 $query
                     ->join('users as assigned_user', 'tasks.assigned_by_user_id', '=', 'assigned_user.id')
                     ->join('users as created_user_user', 'tasks.created_by_user_id', '=', 'created_user_user.id')
+                    ->where('tasks.is_published', 'LIKE', "%{$is_published}%")
                     ->where('tasks.status', 'LIKE', "%{$status}%")
                     ->where('assigned_user.name', 'LIKE', "%{$filter_by_assigned_user}%")
                     ->where('created_user_user.name', 'LIKE', "%{$filter_by_created_user}%");
@@ -55,14 +61,31 @@ class TaskController extends Controller
             ->when($sort_by, fn ($query) => $query->orderBy($sort_by, $order_by))
             ->paginate($limit);
 
+        $users = User::select('id', 'name')->get()->map(function ($user) {
+            return [
+                'label' => $user->name,
+                'value' => $user->id,
+            ];
+        });
+
         return Inertia::render('Task/Task', [
             'response' => $data,
+            'users' => $users,
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('Task/Create');
+        $users = User::select('id', 'name')->get()->map(function ($user) {
+            return [
+                'label' => $user->name,
+                'value' => $user->id,
+            ];
+        });
+
+        return Inertia::render('Task/Create', [
+            'users' => $users,
+        ]);
     }
 
     public function store(TaskRequest $request)
@@ -71,10 +94,9 @@ class TaskController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'status' => Task::TODO,
-            'is_published' => false,
+            'is_published' => $request->isPublish,
             'created_by_user_id' => $request->user()->id,
-            // TODO: add assignee input
-            'assigned_by_user_id' => 1,
+            'assigned_by_user_id' => $request->assignTo,
         ]);
 
         $images = collect($request->images)->map(function ($image) use ($task) {
@@ -98,6 +120,7 @@ class TaskController extends Controller
     {
         $image_path = collect($task->taskImages)->map(function ($image) {
             $image_path = "/tasks/image/$image->name.$image->extension";
+
             return $image_path;
         });
 
@@ -113,12 +136,50 @@ class TaskController extends Controller
                 'images' => $image_path,
                 // TODO: create cast
                 'created_at' => $task->created_at,
-                'updated_at' => $task->updated_at
-            ]
+                'updated_at' => $task->updated_at,
+            ],
         ]);
     }
 
-    public function edit(Task $task) {}
+    public function update_status(TaskUpdateStatusRequest $request, Task $task)
+    {
+        $task->update(['status' => $request->status]);
+    }
+
+    public function edit(Task $task) {
+        $users = User::select('id', 'name')->get()->map(function ($user) {
+            return [
+                'label' => $user->name,
+                'value' => $user->id,
+            ];
+        });
+
+        $image_path = collect($task->taskImages)->map(function ($image) {
+            $image_path = "/tasks/image/$image->name.$image->extension";
+
+            return [
+                'id' => $image->id,
+                'image_path' => $image_path
+            ];
+        });
+        
+        return Inertia::render('Task/Edit', [
+            'users' => $users,
+            'task' => [
+                'title' => $task->title,
+                'description' => $task->description,
+                'status' => $task->status,
+                // TODO: create cast
+                'is_published' => $task->is_published ? 'Yes' : 'No',
+                'created_by' => $task->createdByUserId->name,
+                'assigned_to' => $task->assignedByUserId->only('id', 'name'),
+                'task_images' => $image_path,
+                // TODO: create cast
+                'created_at' => $task->created_at,
+                'updated_at' => $task->updated_at,
+            ],
+        ]);
+    }
 
     public function update(Request $request, Task $task) {}
 

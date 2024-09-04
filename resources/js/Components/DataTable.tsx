@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import { FaCaretDown, FaCaretUp } from 'react-icons/fa6';
 
@@ -26,7 +26,12 @@ const DESCENDING = 'DESC';
 export default function DataTable({ className = '', ...props }) {
   const [orderBy, setOrderBy] = useState(ASCENDING);
   const [sortBy, setSortBy] = useState('');
+  const [columnLength, setColumnLength] = useState<number>(0);
   const caret = useRef<any>([]);
+
+  useEffect(() => {
+    setColumnLength(props.columns.length);
+  }, []);
 
   function orderColumn(column: any, indexRow: any, sort = true) {
     if (sort === false) return false;
@@ -47,7 +52,7 @@ export default function DataTable({ className = '', ...props }) {
     <div>
       <TableHeader />
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead className="text-base text-white bg-gray-500 dark:bg-gray-700 dark:text-gray-400">
+        <thead className="text-base text-white bg-gray-900 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             {props.columns.map(({ column, name, component, sort }: any, indexRow: any) => (
               <th key={indexRow} onClick={() => orderColumn(column, indexRow, sort)} className="py-3 text-left pl-3">
@@ -69,22 +74,30 @@ export default function DataTable({ className = '', ...props }) {
         </thead>
         <tbody>
           <>
-            {props.data.map((dataRow: any, indexRow: any) => (
-              <tr key={indexRow} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                {props.columns.map(({ column, mutate, childComponent }: any, columnIndex: any) => (
-                  <td key={columnIndex} className="py-3 text-base text-left pl-3">
-                    <TableDataComponent
-                      mutate={mutate}
-                      childComponent={childComponent}
-                      dataColumn={column}
-                      dataRow={dataRow}
-                      indexRow={indexRow}
-                      fromPage={props.fromPage}
-                    />
-                  </td>
-                ))}
+            {props.data.length > 0 ? (
+              props.data.map((dataRow: any, indexRow: any) => (
+                <tr key={indexRow} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  {props.columns.map(({ column, mutate, childComponent }: any, columnIndex: any) => (
+                    <td key={columnIndex} className="py-3 text-base text-left pl-3">
+                      <TableDataComponent
+                        mutate={mutate}
+                        childComponent={childComponent}
+                        dataColumn={column}
+                        dataRow={dataRow}
+                        indexRow={indexRow}
+                        fromPage={props.fromPage}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="py-3 text-base text-left pl-3 text-center" colSpan={columnLength}>
+                  <p>No data</p>
+                </td>
               </tr>
-            ))}
+            )}
           </>
         </tbody>
       </table>

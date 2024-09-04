@@ -46,7 +46,7 @@ return [
 
         'task_images' => [
             'driver' => 'local',
-            'root' => storage_path('app/tasks')
+            'root' => storage_path('app/tasks'),
         ],
 
         's3' => [
@@ -75,7 +75,7 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public')
+        public_path('storage') => storage_path('app/public'),
     ],
 
 ];

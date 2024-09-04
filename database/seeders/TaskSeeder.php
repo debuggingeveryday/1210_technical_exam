@@ -14,7 +14,8 @@ class TaskSeeder extends Seeder
     public function run(): void
     {
         Task::factory()->create()->each(function ($task) {
-            Images::factory()->create([
+            $rand_number = mt_rand(0, 5);
+            Images::factory($rand_number)->create([
                 'task_id' => $task->id,
             ]);
         });

@@ -17,21 +17,28 @@ import { FaRegSave } from 'react-icons/fa';
 import { RiDraftLine } from 'react-icons/ri';
 import { FaRegTrashAlt } from 'react-icons/fa';
 
-const CreateTaskForm = () => {
-  const { users } = usePage().props;
+const UpdateTaskForm = () => {
+  const { users, task } = usePage().props;
   const [images, setImages] = useState<any>([]);
   const form = useRef(null);
 
+  const { title, description, assigned_to, task_images }: any = task;
+
+  const defaultAssignTo = {
+    label: assigned_to.name,
+    value: assigned_to.id,
+  };
+
   const { data, setData, post, processing, errors, reset } = useForm<any>({
-    title: null,
-    description: null,
+    title,
+    description,
     assignTo: null,
     images: null,
     isPublish: null,
   });
 
   useEffect(() => {
-    setData({ title: '', description: '', images: [], assignTo: '', isPublish: false });
+    console.log(task_images);
   }, []);
 
   useEffect(() => {
@@ -107,23 +114,29 @@ const CreateTaskForm = () => {
       </div>
       <div>
         <InputLabel htmlFor="assignTo" value="Assign to" />
-        <SearchableSelect options={users} onChange={(data: any) => setData('assignTo', data.value)} />
+        <SearchableSelect
+          options={users}
+          defaultValue={defaultAssignTo}
+          onChange={(data: any) => setData('assignTo', data.value)}
+        />
         <InputError message={errors.assignTo} className="mt-2" />
       </div>
       <div>
         <>
           <div className="grid grid-cols-3 gap-2 grid-flow-row-dense">
-            {images.map((item: File, key: number) => (
-              <div className="relative group" key={key} onClick={() => removeImage(key)}>
-                <img
-                  className="w-full max-h-40 border border-2 border-slate-900 group-hover:opacity-50"
-                  src={getUrlFile(item)}
-                />
-                <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <FaRegTrashAlt className="text-2xl hidden group-hover:block text-red-900" />
-                </span>
-              </div>
-            ))}
+            <>
+              {images.map((item: File, key: number) => (
+                <div className="relative group" key={key} onClick={() => removeImage(key)}>
+                  <img
+                    className="w-full max-h-40 border border-2 border-slate-900 group-hover:opacity-50"
+                    src={getUrlFile(item)}
+                  />
+                  <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <FaRegTrashAlt className="text-2xl hidden group-hover:block text-red-900" />
+                  </span>
+                </div>
+              ))}
+            </>
           </div>
           <label
             htmlFor="uploadFile1"
@@ -153,7 +166,7 @@ const CreateTaskForm = () => {
   );
 };
 
-export default function Create({ auth }: PageProps) {
+export default function Edit({ auth }: PageProps) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -166,7 +179,7 @@ export default function Create({ auth }: PageProps) {
           <Link href={route('task.index')} className="flex">
             <IoMdArrowRoundBack className="mt-1" /> <span>Back</span>
           </Link>
-          <CreateTaskForm />
+          <UpdateTaskForm />
         </div>
       </div>
     </AuthenticatedLayout>

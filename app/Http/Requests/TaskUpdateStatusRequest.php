@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Task;
 
-class TaskRequest extends FormRequest
+class TaskUpdateStatusRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,15 +18,14 @@ class TaskRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illum\inate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
+        $statuses = join(",", Task::ALL_STATUSES);
+        
         return [
-            'title' => ['required', 'string', 'max:100'],
-            'description' => ['required', 'string', 'max:100'],
-            'images.*' => ['mimes:jpeg,jpg,png,gif', 'max: 4000'],
-            'assignTo' => ['required', 'exists:users,id'],
+            'status' => ['required', "in:$statuses"]
         ];
     }
 }

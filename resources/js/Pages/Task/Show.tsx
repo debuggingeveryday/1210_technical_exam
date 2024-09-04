@@ -1,16 +1,26 @@
 import React, { useEffect, useState, Fragment } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage, Link } from '@inertiajs/react';
+import { Head, usePage, Link, router } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { formatTime } from '@/util/date';
 import { IoMdArrowRoundBack } from 'react-icons/io';
+import { FaRegTrashAlt } from 'react-icons/fa';
+import PrimaryButton from '@/Components/PrimaryButton';
+import SecondaryButton from '@/Components/PrimaryButton';
+import { FaWrench } from 'react-icons/fa';
+import { MdOutlineSpeakerNotes } from 'react-icons/md';
+import { MdDone } from 'react-icons/md';
+import { trimString } from '@/util/string';
 
 export default function Show({ auth }: PageProps) {
   const { task }: any = usePage().props;
+  const pageProps: any = usePage().props;
 
-  useEffect(() => {
-    console.log(task);
-  }, []);
+  const updateStatus = (status: string = '') => {
+    router.post(route('task.update-status', 1), {
+      status,
+    });
+  };
 
   return (
     <AuthenticatedLayout
@@ -25,6 +35,11 @@ export default function Show({ auth }: PageProps) {
             <IoMdArrowRoundBack className="mt-1" /> <span>Back</span>
           </Link>
           <div className="w-1/2 bg-white p-8 rounded-lg shadow-lg place-self-center grid grid-cols-1 gap-y-4">
+            <div className="place-self-end">
+              <button className="text-red-500" type="button">
+                <FaRegTrashAlt className="mt-1" />
+              </button>
+            </div>
             <table className="table-auto">
               <tbody>
                 <tr className="border-b border-slate-300">
@@ -43,7 +58,7 @@ export default function Show({ auth }: PageProps) {
                   <td>
                     <strong>Status:</strong>
                   </td>
-                  <td>{task.status}</td>
+                  <td className="capitalize">{trimString(task.status)}</td>
                 </tr>
                 <tr className="border-b border-slate-300">
                   <td>
@@ -77,15 +92,28 @@ export default function Show({ auth }: PageProps) {
                 </tr>
               </tbody>
             </table>
-            <div className="grid grid-cols-3 grid-flow-row-dense">
+            <div>
               <p>
                 <strong>Images:</strong>
               </p>
+            </div>
+            <div className="grid grid-cols-3 gap-4 grid-flow-row-dense">
               {task.images.map((item: any, key: number) => (
                 <Fragment key={key}>
                   <img src={item} />
                 </Fragment>
               ))}
+            </div>
+            <div className="justify-self-end flex gap-x-2">
+              <PrimaryButton className="bg-slate-300 text-slate-900" onClick={() => updateStatus('todo')}>
+                <MdOutlineSpeakerNotes className="mr-2 mb-1" /> Todo
+              </PrimaryButton>
+              <SecondaryButton className="bg-yellow-300 text-slate-900" onClick={() => updateStatus('in_progress')}>
+                <FaWrench className="mr-2" /> In Progress
+              </SecondaryButton>
+              <SecondaryButton type="submit" onClick={() => updateStatus('done')}>
+                <MdDone className="mr-2" /> Done
+              </SecondaryButton>
             </div>
           </div>
         </div>

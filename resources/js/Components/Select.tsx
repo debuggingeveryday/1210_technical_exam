@@ -9,12 +9,24 @@ export default function Select({ className = '', options = [], placeholder = '',
       >
         {options.length > 0 && (
           <>
+            {props.hasAllOption && (
+              <option className="text-gray-100" value="" selected>
+                All
+              </option>
+            )}
+            {props.placeholderValue && (
+              <option className="text-gray-100" value="" disabled selected>
+                {props.placeholderValue}
+              </option>
+            )}
             {options.map((item: any) =>
               props.mutate ? (
                 <>{props.mutate(item)}</>
               ) : (
                 <>
-                  <option label={item}>{item}</option>
+                  <option label={item} value={item}>
+                    {item}
+                  </option>
                 </>
               )
             )}
