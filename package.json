@@ -4,11 +4,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "watch": "tsc && vite build --watch",
+    "watch": "tsc && npm run format-php && npm run format-ts && npm run lint && vite build --watch",
     "lint": "eslint --fix ./resources/js",
     "prepare": "husky",
-    "format": "prettier './resources/{ts,tsx}/**/*.{ts,tsx}' --write",
-    "pre-commit": "npm run format && lint-staged && pretty-quick --staged",
+    "format-php": "./vendor/bin/pint",
+    "format-ts": "prettier './resources/js/**/*.{ts,tsx}' --write",
     "cypress:open": "npx cypress open"
   },
   "lint-staged": {

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Task;
 use App\Models\Images;
+use App\Models\Task;
+use Illuminate\Database\Seeder;
 
 class TaskSeeder extends Seeder
 {
@@ -13,10 +13,10 @@ class TaskSeeder extends Seeder
      */
     public function run(): void
     {
-        $task = Task::factory()->create();
-
-        Images::factory(50)->create([
-            'task_id' => $task->id
-        ]);
+        Task::factory()->create()->each(function ($task) {
+            Images::factory()->create([
+                'task_id' => $task->id,
+            ]);
+        });
     }
 }

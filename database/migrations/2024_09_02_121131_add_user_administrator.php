@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Illuminate\Database\Migrations\Migration;
 use App\Models\User;
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -20,7 +20,7 @@ return new class extends Migration
             'email' => 'admin@system.com',
             'email_verified_at' => now(),
             'password' => Hash::make('admin12345'),
-            'remember_token' => Str::random(10)
+            'remember_token' => Str::random(10),
         ]);
     }
 

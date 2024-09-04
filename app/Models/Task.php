@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\User;
 
 class Task extends Model
 {
@@ -17,16 +16,19 @@ class Task extends Model
         'status',
         'is_published',
         'created_by_user_id',
-        'assigned_by_user_id'
+        'assigned_by_user_id',
     ];
 
     public const TODO = 'todo';
+
     public const IN_PROGRESS = 'in progress';
+
     public const DONE = 'done';
+
     public const ALL_STATUSES = [
         self::TODO,
         self::IN_PROGRESS,
-        self::DONE
+        self::DONE,
     ];
 
     public function createdByUserId(): BelongsTo
@@ -37,5 +39,5 @@ class Task extends Model
     public function assignedByUserId(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by_user_id');
-    } 
+    }
 }

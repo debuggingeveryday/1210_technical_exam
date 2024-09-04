@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('status')->nullable();
             $table->boolean('is_published');
-            
+
             $table->unsignedBigInteger('created_by_user_id');
             $table->foreign('created_by_user_id')->references('id')->on('users');
 

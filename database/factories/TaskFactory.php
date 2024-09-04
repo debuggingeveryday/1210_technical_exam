@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Task>
@@ -24,7 +24,7 @@ class TaskFactory extends Factory
             'is_published' => fake()->boolean(),
             'status' => fake()->randomElement(Task::ALL_STATUSES),
             'created_by_user_id' => User::factory(),
-            'assigned_by_user_id' => User::factory()
+            'assigned_by_user_id' => User::factory(),
         ];
     }
 }

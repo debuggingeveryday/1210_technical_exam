@@ -12,7 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasRoles, HasPermissions, HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HasPermissions, HasRoles, Notifiable;
 
     public const ADMINISTRATOR_ID = 1;
 

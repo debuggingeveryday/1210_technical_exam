@@ -11,13 +11,15 @@ class Role extends SpatieRole
 {
     use HasFactory;
 
-    public const ADMINISTRATOR = "administrator";
-    public const MANAGER = "manager";
-    public const WORKER = "worker";
+    public const ADMINISTRATOR = 'administrator';
+
+    public const MANAGER = 'manager';
+
+    public const WORKER = 'worker';
 
     public const ALL_ROLES = [
         self::ADMINISTRATOR,
         self::MANAGER,
-        self::WORKER
+        self::WORKER,
     ];
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRef, useState } from 'react';
-import { FaCaretLeft, FaCaretRight } from "react-icons/fa";
-import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
+import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
+import { FaCaretDown, FaCaretUp } from 'react-icons/fa6';
 
 /**
  * TODO: remove emit method and change to event listener and http request data should inside the component
@@ -18,7 +18,7 @@ import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
  * @param pageAction function // callback function for previous and next.
  *
  * @return JSX.element // <DynamicTable />
-*/
+ */
 
 const ASCENDING = 'ASC';
 const DESCENDING = 'DESC';
@@ -51,7 +51,7 @@ export default function DataTable({ className = '', ...props }) {
           <tr>
             {props.columns.map(({ column, name, component, sort }: any, indexRow: any) => (
               <th key={indexRow} onClick={() => orderColumn(column, indexRow, sort)} className="py-3 text-left pl-3">
-                {column === "_custom" ? (
+                {column === '_custom' ? (
                   <>{component}</>
                 ) : (
                   <div className="flex space-x-1">
@@ -73,7 +73,14 @@ export default function DataTable({ className = '', ...props }) {
               <tr key={indexRow} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 {props.columns.map(({ column, mutate, childComponent }: any, columnIndex: any) => (
                   <td key={columnIndex} className="py-3 text-base text-left pl-3">
-                    <TableDataComponent mutate={mutate} childComponent={childComponent} dataColumn={column} dataRow={dataRow} indexRow={indexRow} fromPage={props.fromPage} />
+                    <TableDataComponent
+                      mutate={mutate}
+                      childComponent={childComponent}
+                      dataColumn={column}
+                      dataRow={dataRow}
+                      indexRow={indexRow}
+                      fromPage={props.fromPage}
+                    />
                   </td>
                 ))}
               </tr>
@@ -104,8 +111,8 @@ export default function DataTable({ className = '', ...props }) {
 export const TableHeader = ({ children }: any) => <div>{children}</div>;
 
 const TableDataComponent = ({ mutate, dataColumn, childComponent, dataRow, indexRow, fromPage }: any) => {
-  if (dataColumn === '_custom') return childComponent(dataRow, indexRow)
-  if (dataColumn === '_index') return (indexRow+fromPage) + 1;
+  if (dataColumn === '_custom') return childComponent(dataRow, indexRow);
+  if (dataColumn === '_index') return indexRow + fromPage + 1;
   if (!['_custom', '_index'].includes(dataColumn) && mutate) return mutate(dataRow[dataColumn], dataRow, indexRow);
 
   return dataRow[dataColumn];
