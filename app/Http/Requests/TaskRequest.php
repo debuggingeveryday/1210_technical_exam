@@ -11,18 +11,20 @@ class TaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, \Illum\inate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'title' => ['required', 'string', 'max:100'],
+            'description' => ['required', 'string', 'max:100'],
+            'images.*' => ['mimes:jpeg,jpg,png,gif', 'max: 4000'],
         ];
     }
 }

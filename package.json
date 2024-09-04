@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "watch": "tsc && npm run format-php && npm run format-ts && npm run lint && vite build --watch",
+    "watch": "tsc && vite build --watch",
     "lint": "eslint --fix ./resources/js",
     "prepare": "husky",
     "format-php": "./vendor/bin/pint",

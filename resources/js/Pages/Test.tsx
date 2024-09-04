@@ -2,7 +2,7 @@ import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { PageProps } from '@/types';
-import SearchSelect from '@/Components/SearchSelect';
+import AlertBar from '@/Components/AlertBar';
 
 export default function Test({ auth }: PageProps) {
   return (
@@ -16,9 +16,7 @@ export default function Test({ auth }: PageProps) {
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <h1>Test Page</h1>
 
-          <i>Test Search Select</i>
-
-          <SearchSelect />
+          <AlertBar />
         </div>
       </div>
     </AuthenticatedLayout>
