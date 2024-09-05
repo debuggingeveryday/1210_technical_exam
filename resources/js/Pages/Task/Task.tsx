@@ -10,7 +10,7 @@ import TextInput from '@/Components/TextInput';
 import { FaEye } from 'react-icons/fa';
 import Select from '@/Components/Select';
 import InputLabel from '@/Components/InputLabel';
-import { TODO, IN_PROGRESS, DONE, PUBLISHED, DRAFT } from '@/constants/constants';
+import { TODO, IN_PROGRESS, DONE, PUBLISHED, DRAFT, CAN_CREATE_TASK } from '@/constants/constants';
 import { trimString } from '@/util/string';
 import SearchableSelect from '@/Components/SearchableSelect';
 
@@ -18,6 +18,10 @@ export default function Task({ auth }: PageProps) {
   const { response, users }: any = usePage().props;
   const STATUSES = [TODO, IN_PROGRESS, DONE];
   const PUBLISH = [PUBLISHED, DRAFT];
+
+  const USER_CAN_CREATE_TASK: boolean = auth.user.permissions.some(
+    ({ name }: { name: string }) => name === CAN_CREATE_TASK
+  );
 
   const { data, setData, post, put, processing, errors, get }: any = useForm({
     filterByTitle: null,
@@ -142,9 +146,11 @@ export default function Task({ auth }: PageProps) {
 
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 grid space-y-5">
-          <PrimaryButton onClick={() => router.get(route('task.create'))} className="place-self-start">
-            Create Task
-          </PrimaryButton>
+          {USER_CAN_CREATE_TASK && (
+            <PrimaryButton onClick={() => router.get(route('task.create'))} className="place-self-start">
+              Create Task
+            </PrimaryButton>
+          )}
           <div className="grid gap-y-3 gap-x-6 grid-cols-2 grid-flow-row-dense">
             <div>
               <InputLabel htmlFor="filterByTitle" value="Title" />
@@ -159,8 +165,15 @@ export default function Task({ auth }: PageProps) {
               />
             </div>
             <div>
-              <InputLabel htmlFor="assignTo" value="Assign to" />
-              <SearchableSelect options={users} onChange={(value: any) => setData('filterByAssignedUser', value.id)} />
+              {USER_CAN_CREATE_TASK && (
+                <>
+                  <InputLabel htmlFor="assignTo" value="Assign to" />
+                  <SearchableSelect
+                    options={users}
+                    onChange={(value: any) => setData('filterByAssignedUser', value.id)}
+                  />
+                </>
+              )}
             </div>
             <div>
               <InputLabel htmlFor="createdBy" value="Created by" />

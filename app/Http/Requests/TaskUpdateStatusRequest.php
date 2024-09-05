@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Task;
+use Illuminate\Foundation\Http\FormRequest;
 
 class TaskUpdateStatusRequest extends FormRequest
 {
@@ -22,10 +22,10 @@ class TaskUpdateStatusRequest extends FormRequest
      */
     public function rules(): array
     {
-        $statuses = join(",", Task::ALL_STATUSES);
-        
+        $statuses = implode(',', Task::ALL_STATUSES);
+
         return [
-            'status' => ['required', "in:$statuses"]
+            'status' => ['required', "in:$statuses"],
         ];
     }
 }

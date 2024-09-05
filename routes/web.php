@@ -27,6 +27,7 @@ Route::put('/task/{task}/update-status', [TaskController::class, 'update_status'
 
 Route::get('/tasks/image/{image}', function ($image) {
     $path = storage_path("app/tasks/$image");
+
     return response()->file($path);
 })->middleware(['auth', 'verified']);
 

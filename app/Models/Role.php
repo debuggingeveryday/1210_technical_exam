@@ -15,11 +15,11 @@ class Role extends SpatieRole
 
     public const MANAGER = 'manager';
 
-    public const WORKER = 'worker';
+    public const ASSIGNEE = 'assignee';
 
     public const ALL_ROLES = [
         self::ADMINISTRATOR,
         self::MANAGER,
-        self::WORKER,
+        self::ASSIGNEE,
     ];
 }

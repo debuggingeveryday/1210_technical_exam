@@ -25,7 +25,7 @@ class TaskUpdateRequest extends FormRequest
             'title' => ['required', 'string', 'max:100'],
             'description' => ['required', 'string', 'max:100'],
             'assignTo' => ['required', 'exists:users,id'],
-            'isPublish' => ['required', 'boolean']
+            'isPublish' => ['required', 'boolean'],
         ];
     }
 }

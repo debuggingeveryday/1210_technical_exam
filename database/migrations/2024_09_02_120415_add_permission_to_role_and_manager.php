@@ -16,7 +16,7 @@ return new class extends Migration
         $manager_role = Role::where(['name' => Role::MANAGER])->firstOrFail();
         $manager_role->givePermissionTo(Permission::ALL_PERMISSIONS);
 
-        $manager_role = Role::where(['name' => Role::WORKER])->firstOrFail();
+        $manager_role = Role::where(['name' => Role::ASSIGNEE])->firstOrFail();
         $manager_role->givePermissionTo([
             Permission::CAN_ACCESS_TASK,
             Permission::CAN_VIEW_TASK,
@@ -33,7 +33,7 @@ return new class extends Migration
         $manager_role = Role::where(['name' => Role::MANAGER])->firstOrFail();
         $manager_role->revokePermissionTo(Permission::ALL_PERMISSIONS);
 
-        $manager_role = Role::where(['name' => Role::WORKER])->firstOrFail();
+        $manager_role = Role::where(['name' => Role::ASSIGNEE])->firstOrFail();
         $manager_role->revokePermissionTo([
             Permission::CAN_ACCESS_TASK,
             Permission::CAN_VIEW_TASK,
