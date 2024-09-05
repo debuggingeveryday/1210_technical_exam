@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use App\Http\Requests\TaskUpdateStatusRequest;
+use App\Http\Requests\TaskUpdateRequest;
 
 class TaskController extends Controller
 {
@@ -21,7 +22,7 @@ class TaskController extends Controller
         $filter_by_assigned_user = $request->query('filterByAssignedUser') ?? '';
         $publish = $request->query('publish') ?? '';
         $status = $request->query('status') ?? '';
-        $sort_by = $request->query('sortBy');
+        $sort_by = $request->query('sortBy') ?? 'created_at';
         $order_by = $request->query('orderBy') ?? 'DESC';
 
         $is_published = $publish === 'published' ? true : false;
@@ -126,6 +127,7 @@ class TaskController extends Controller
 
         return Inertia::render('Task/Show', [
             'task' => [
+                'id' => $task->id,
                 'title' => $task->title,
                 'description' => $task->description,
                 'status' => $task->status,
@@ -159,13 +161,16 @@ class TaskController extends Controller
 
             return [
                 'id' => $image->id,
+                'name' => $image->name,
+                'extension' => $image->extension,
                 'image_path' => $image_path
             ];
         });
-        
+
         return Inertia::render('Task/Edit', [
             'users' => $users,
             'task' => [
+                'id' => $task->id,
                 'title' => $task->title,
                 'description' => $task->description,
                 'status' => $task->status,
@@ -181,7 +186,22 @@ class TaskController extends Controller
         ]);
     }
 
-    public function update(Request $request, Task $task) {}
+    public function update(Request $request, Task $task)
+    {
+        $updateRequest = [
+            ...$request->only('title', 'description'),
+            'assigned_by_user_id' => $request->assignTo,
+            'is_published' => $request->isPublish
+        ];
 
-    public function destroy(Task $task) {}
+        $task->update($updateRequest);
+
+        return to_route('task.index');
+    }
+
+    public function destroy(Task $task) {
+        $task->delete();
+
+        return to_route('task.index');
+    }
 }

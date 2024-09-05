@@ -17,7 +17,7 @@ export default function Show({ auth }: PageProps) {
   const pageProps: any = usePage().props;
 
   const updateStatus = (status: string = '') => {
-    router.post(route('task.update-status', 1), {
+    router.put(route('task.update-status', task.id), {
       status,
     });
   };
@@ -36,7 +36,11 @@ export default function Show({ auth }: PageProps) {
           </Link>
           <div className="w-1/2 bg-white p-8 rounded-lg shadow-lg place-self-center grid grid-cols-1 gap-y-4">
             <div className="place-self-end">
-              <button className="text-red-500" type="button">
+              <button
+                className="text-red-500"
+                type="button"
+                onClick={() => router.delete(route('task.destroy', task.id))}
+              >
                 <FaRegTrashAlt className="mt-1" />
               </button>
             </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment, useRef } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm, Link, usePage } from '@inertiajs/react';
+import { Head, useForm, Link, usePage, router } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
@@ -20,68 +20,44 @@ import { FaRegTrashAlt } from 'react-icons/fa';
 const UpdateTaskForm = () => {
   const { users, task } = usePage().props;
   const [images, setImages] = useState<any>([]);
-  const form = useRef(null);
+  const [existImage, setExistImage] = useState<any>([]);
 
-  const { title, description, assigned_to, task_images }: any = task;
+  const { id, title, description, assigned_to, task_images }: any = task;
 
   const defaultAssignTo = {
     label: assigned_to.name,
     value: assigned_to.id,
   };
 
-  const { data, setData, post, processing, errors, reset } = useForm<any>({
+  const { data, setData, patch, processing, errors, reset } = useForm<any>({
     title,
     description,
-    assignTo: null,
-    images: null,
+    assignTo: assigned_to.id,
     isPublish: null,
   });
 
-  useEffect(() => {
-    console.log(task_images);
-  }, []);
-
-  useEffect(() => {
-    setData({ ...data, images });
-  }, [images]);
-
   const publish = () => {
-    setData('isPublish', true);
+    setData({ ...data, isPublish: true });
   };
 
   const saveAsDraft = () => {
-    setData('isPublish', false);
-  };
-
-  const removeImage = (key: number) => {
-    setData({ ...data, images: images.splice(key, 1) });
+    setData({ ...data, isPublish: false });
   };
 
   const submit: FormEventHandler = event => {
     event.preventDefault();
 
-    post(route('task.store'));
+    patch(route('task.update', id));
   };
 
   function onFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const files: any = event.target.files;
 
-    if (files) {
-      const reader: any = new FileReader();
-
-      if (reader && files[0]) {
-        reader.readAsText(files[0], 'UTF-8');
-        reader.onload = (event: any) => event.target.result;
-        reader.onerror = (event: any) => console.log('Error', event);
-
-        setImages([...images, files[0]]);
-      }
-    }
+    if (files) setImages([...images, files[0]]);
   }
 
   return (
     <form
-      ref={form}
       onSubmit={submit}
       className="w-1/2 bg-white p-8 rounded-lg shadow-lg grid grid-cols-1 gap-y-4 justify-self-center"
     >
@@ -125,11 +101,11 @@ const UpdateTaskForm = () => {
         <>
           <div className="grid grid-cols-3 gap-2 grid-flow-row-dense">
             <>
-              {images.map((item: File, key: number) => (
-                <div className="relative group" key={key} onClick={() => removeImage(key)}>
+              {task_images.map((item: any, key: number) => (
+                <div className="relative group" key={key}>
                   <img
                     className="w-full max-h-40 border border-2 border-slate-900 group-hover:opacity-50"
-                    src={getUrlFile(item)}
+                    src={item.image_path}
                   />
                   <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <FaRegTrashAlt className="text-2xl hidden group-hover:block text-red-900" />
@@ -138,20 +114,6 @@ const UpdateTaskForm = () => {
               ))}
             </>
           </div>
-          <label
-            htmlFor="uploadFile1"
-            className="mt-5 flex bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 font-semibold text-xs uppercase outline-none rounded w-max cursor-pointer mx-auto font-[sans-serif]"
-          >
-            <IoMdCloudUpload className="mr-2 fill-white inline" />
-            Add image
-            <input
-              type="file"
-              accept="image/png, image/gif, image/jpeg"
-              id="uploadFile1"
-              onChange={(event: any) => onFileUpload(event)}
-              className="hidden"
-            />
-          </label>
         </>
       </div>
       <div className="justify-self-end flex gap-x-2">

@@ -25,9 +25,6 @@ const CreateTaskForm = () => {
   const { data, setData, post, processing, errors, reset } = useForm<any>({
     title: null,
     description: null,
-    assignTo: null,
-    images: null,
-    isPublish: null,
   });
 
   useEffect(() => {
@@ -53,23 +50,15 @@ const CreateTaskForm = () => {
   const submit: FormEventHandler = event => {
     event.preventDefault();
 
+    console.log(data);
+
     post(route('task.store'));
   };
 
   function onFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const files: any = event.target.files;
 
-    if (files) {
-      const reader: any = new FileReader();
-
-      if (reader && files[0]) {
-        reader.readAsText(files[0], 'UTF-8');
-        reader.onload = (event: any) => event.target.result;
-        reader.onerror = (event: any) => console.log('Error', event);
-
-        setImages([...images, files[0]]);
-      }
-    }
+    if (files) setImages([...images, files[0]]);
   }
 
   return (

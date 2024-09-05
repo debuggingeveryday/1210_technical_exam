@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\DB;
 
 class Kernel extends ConsoleKernel
 {
@@ -12,7 +13,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Delete every 30 days base on deleted_at
+        $schedule->call(function () {
+            DB::table('tasks')->where('deleted_at', '<=', now()->subDays(30))->forceDelete();
+        })->daily();
     }
 
     /**

@@ -23,11 +23,10 @@ Route::get('/', function () {
 Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 Route::resource('/task', TaskController::class)->middleware(['auth', 'verified']);
 
-Route::post('/task/{task}/update-status', [TaskController::class, 'update_status'])->name('task.update-status');
+Route::put('/task/{task}/update-status', [TaskController::class, 'update_status'])->name('task.update-status');
 
 Route::get('/tasks/image/{image}', function ($image) {
     $path = storage_path("app/tasks/$image");
-
     return response()->file($path);
 })->middleware(['auth', 'verified']);
 
