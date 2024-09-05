@@ -40,12 +40,12 @@ pass: assignee12345
 
 ### Roles and Permissions:
 
-<p>Admin can access all</p>
-<p>Manager can access all</p>
-<p>Assignee only can access - access task page, view task table, view task details, update status task</p>
+Admin can access all</br>
+Manager can access all</br>
+Assignee only can access - access task page, view task table, view task details, update status task
 
 ### Follow up update
 
-<p>Add docker-compose.yml update</p>
-<p>Add notification every actions</p>
-<p>Deployment to server</p>
+Add docker-compose.yml update</br>
+Add notification every actions</br>
+Deployment to server</br>
