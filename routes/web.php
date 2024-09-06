@@ -31,7 +31,4 @@ Route::get('/tasks/image/{image}', function ($image) {
     return response()->file($path);
 })->middleware(['auth', 'verified']);
 
-/* for testing */
-Route::get('/test', fn () => Inertia::render('Test'));
-
 require __DIR__.'/auth.php';
