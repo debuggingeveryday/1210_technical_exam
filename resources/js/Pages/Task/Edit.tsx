@@ -39,10 +39,6 @@ const UpdateTaskForm = () => {
   });
 
   useEffect(() => {
-    console.log(data);
-  }, [data]);
-
-  useEffect(() => {
     setExistImages(task_images);
   }, []);
 
@@ -70,9 +66,6 @@ const UpdateTaskForm = () => {
 
   const onFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files: any = event.target.files;
-    const { name, type } = files;
-
-    const allowedTypes = ['image/webp', 'image/jpeg', 'image/png'];
 
     if (files) setImages([...images, files[0]]);
   };
@@ -197,7 +190,7 @@ export default function Edit({ auth }: PageProps) {
   return (
     <AuthenticatedLayout
       user={auth.user}
-      header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Task Create</h2>}
+      header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Task Edit</h2>}
     >
       <Head title="Create Task" />
 

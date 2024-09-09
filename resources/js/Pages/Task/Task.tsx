@@ -13,9 +13,10 @@ import InputLabel from '@/Components/InputLabel';
 import { TODO, IN_PROGRESS, DONE, PUBLISHED, DRAFT, CAN_CREATE_TASK } from '@/constants/constants';
 import { trimString } from '@/util/string';
 import SearchableSelect from '@/Components/SearchableSelect';
+import { toast } from 'react-toastify';
 
 export default function Task({ auth }: PageProps) {
-  const { response, users }: any = usePage().props;
+  const { response, users, flash }: any = usePage().props;
   const STATUSES = [TODO, IN_PROGRESS, DONE];
   const PUBLISH = [PUBLISHED, DRAFT];
 
@@ -48,6 +49,8 @@ export default function Task({ auth }: PageProps) {
       orderBy: 'ASC',
       page: 1,
     });
+
+    if (flash) toast.success(flash.message);
   }, []);
 
   const limit = [5, 10, 20, 50];

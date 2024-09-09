@@ -12,8 +12,9 @@ use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class TaskController extends Controller
@@ -150,7 +151,9 @@ class TaskController extends Controller
 
         Images::insert($images->toArray());
 
-        return to_route('task.index');
+        return to_route('task.index')->with([
+            'message' => 'Created Successfully'
+        ]);
     }
 
     public function show(Task $task)
@@ -240,6 +243,12 @@ class TaskController extends Controller
         ];
 
         $task->update($updateRequest);
+
+        $message = $request->isPublish ? "Published" : "Updated Successfully";
+
+        return to_route('task.index')->with([
+            'message' => $message
+        ]);
     }
 
     public function upload_files(Request $request, Task $task)
@@ -278,8 +287,6 @@ class TaskController extends Controller
         });
 
         Images::insert($images->toArray());
-
-        return to_route('task.index');
     }
 
     public function destroy(Task $task)
@@ -288,6 +295,8 @@ class TaskController extends Controller
 
         $task->delete();
 
-        return to_route('task.index');
+        return to_route('task.index')->with([
+            'message' => 'Deleted Task Successfully'
+        ]);
     }
 }
