@@ -47,7 +47,11 @@ Assignee only can access - access task page, view task table, view task details,
 ### Follow up update
 
 Add docker-compose.yml update</br>
-Add notification every actions</br>
+Add notification every actions(Done)</br>
 Enhancement of web layouts</br>
 Add more browser test</br>
 Deployment to server</br>
+
+### Reference
+
+for Dockerfile: https://github.com/refactorian/laravel-docker/tree/laravel_10x
