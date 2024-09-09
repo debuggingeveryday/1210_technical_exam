@@ -1,15 +1,36 @@
 # 1210 technical exam Task managing system
 
+### Requirements
+
+docker - https://www.docker.com/
+git bash - https://git-scm.com/
+
 ## Installation
 
-### Building project
+### Configuration (git bash or bash only)
 ```
 git clone https://github.com/debuggingeveryday/1210_technical_exam.git
 cd 1210_technical_exam
+// build container
+docker-compose up -d
+// once if finish build the container then run to tty with container php
+docker-compose exec php bash
 cp .env.example .env
-// configure your env base in your local
-php artisan migrate
+composer install
+// once if finish installing composer package
 npm install
+php artisan key:generate
+php artisan migrate
+```
+
+### Address location
+
+for web project: http://localhost
+for managing database: http://localhost:9090
+
+### Run project
+
+```
 // run watch
 npm run watch
 // to build
