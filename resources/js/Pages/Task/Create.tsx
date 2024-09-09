@@ -49,9 +49,6 @@ const CreateTaskForm = () => {
 
   const submit: FormEventHandler = event => {
     event.preventDefault();
-
-    console.log(data);
-
     post(route('task.store'));
   };
 

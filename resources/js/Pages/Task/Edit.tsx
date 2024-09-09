@@ -18,9 +18,11 @@ import { RiDraftLine } from 'react-icons/ri';
 import { FaRegTrashAlt } from 'react-icons/fa';
 
 const UpdateTaskForm = () => {
+  const props = usePage().props;
   const { users, task } = usePage().props;
   const [images, setImages] = useState<any>([]);
-  const [existImage, setExistImage] = useState<any>([]);
+  const [existImages, setExistImages] = useState<any>([]);
+  const [deletedImages, setDeletedImages] = useState<any>([]);
 
   const { id, title, description, assigned_to, task_images }: any = task;
 
@@ -36,6 +38,14 @@ const UpdateTaskForm = () => {
     isPublish: null,
   });
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
+  useEffect(() => {
+    setExistImages(task_images);
+  }, []);
+
   const publish = () => {
     setData({ ...data, isPublish: true });
   };
@@ -47,14 +57,40 @@ const UpdateTaskForm = () => {
   const submit: FormEventHandler = event => {
     event.preventDefault();
 
-    patch(route('task.update', id));
+    patch(route('task.update', id), {
+      preserveState: true,
+      onSuccess: () => {
+        router.post(route('task.upload-files', id), {
+          images,
+          deletedImages,
+        });
+      },
+    });
   };
 
-  function onFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+  const onFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files: any = event.target.files;
+    const { name, type } = files;
+
+    const allowedTypes = ['image/webp', 'image/jpeg', 'image/png'];
 
     if (files) setImages([...images, files[0]]);
-  }
+  };
+
+  const removeImage = (key: number) => {
+    images.splice(key, 1);
+    setImages([...images]);
+  };
+
+  const removeExistImage = (item: any, key: number) => {
+    const index = existImages.indexOf(item);
+    setDeletedImages([...deletedImages, item.id]);
+
+    if (index > -1) {
+      existImages.splice(index, 1);
+      setExistImages([...existImages]);
+    }
+  };
 
   return (
     <form
@@ -101,8 +137,9 @@ const UpdateTaskForm = () => {
         <>
           <div className="grid grid-cols-3 gap-2 grid-flow-row-dense">
             <>
-              {task_images.map((item: any, key: number) => (
-                <div className="relative group" key={key}>
+              {/* Populate from existing image */}
+              {existImages.map((item: any, key: number) => (
+                <div className="relative group" key={key} onClick={() => removeExistImage(item, key)}>
                   <img
                     className="w-full max-h-40 border border-2 border-slate-900 group-hover:opacity-50"
                     src={item.image_path}
@@ -113,7 +150,35 @@ const UpdateTaskForm = () => {
                 </div>
               ))}
             </>
+            <>
+              {/* New Image */}
+              {images.map((item: File, key: number) => (
+                <div className="relative group" key={key} onClick={() => removeImage(key)}>
+                  <img
+                    className="w-full max-h-40 border border-2 border-slate-900 group-hover:opacity-50"
+                    src={getUrlFile(item)}
+                  />
+                  <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <FaRegTrashAlt className="text-2xl hidden group-hover:block text-red-900" />
+                  </span>
+                </div>
+              ))}
+            </>
           </div>
+          <label
+            htmlFor="uploadFile1"
+            className="mt-5 flex bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 font-semibold text-xs uppercase outline-none rounded w-max cursor-pointer mx-auto font-[sans-serif]"
+          >
+            <IoMdCloudUpload className="mr-2 fill-white inline" />
+            Add image
+            <input
+              type="file"
+              accept="image/png, image/gif, image/jpeg"
+              id="uploadFile1"
+              onChange={(event: any) => onFileUpload(event)}
+              className="hidden"
+            />
+          </label>
         </>
       </div>
       <div className="justify-self-end flex gap-x-2">

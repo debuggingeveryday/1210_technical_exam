@@ -4,15 +4,17 @@ namespace App\Http\Controllers;
 
 use App\ACL\ACL;
 use App\Http\Requests\TaskRequest;
+use App\Http\Requests\TaskUpdateRequest;
 use App\Http\Requests\TaskUpdateStatusRequest;
 use App\Models\Images;
 use App\Models\Permission;
+use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
-use App\Models\Role;
 
 class TaskController extends Controller
 {
@@ -83,10 +85,12 @@ class TaskController extends Controller
                         ->where('tasks.assigned_by_user_id', '=', auth()->user()->id);
                 }
             })
-            ->where(function($query) {
+            ->where(function ($query) {
                 $can_publish = auth()->user()->hasRole([Role::MANAGER, Role::ADMINISTRATOR]);
 
-                if (! $can_publish) $query->where('is_published', 1);
+                if (! $can_publish) {
+                    $query->where('is_published', 1);
+                }
             })
             ->paginate($limit);
 
@@ -225,7 +229,7 @@ class TaskController extends Controller
         ]);
     }
 
-    public function update(Request $request, Task $task)
+    public function update(TaskUpdateRequest $request, Task $task)
     {
         ACL::allowOnly([Permission::CAN_UPDATE_TASK]);
 
@@ -236,6 +240,44 @@ class TaskController extends Controller
         ];
 
         $task->update($updateRequest);
+    }
+
+    public function upload_files(Request $request, Task $task)
+    {
+        ACL::allowOnly([Permission::CAN_UPDATE_TASK]);
+
+        $validation = [
+            'images' => ['sometimes', 'nullable', 'array'],
+            'deletedImages' => ['sometimes', 'nullable', 'array'],
+            'images.*' => ['nullable', 'mimes:jpeg,jpg,png,gif', 'max: 4000'],
+            'deletedImages.*' => ['nullable', 'exists:images,id'],
+        ];
+
+        $request->validate($validation);
+
+        if ($request->deletedImages) {
+            $exist_images = Images::whereIn('id', $request->deletedImages)->get();
+
+            $exist_images->each(function ($image) {
+                $file_name = "$image->name.$image->extension";
+                Storage::disk('task_images')->delete($file_name);
+                $image->delete();
+            });
+        }
+
+        $images = collect($request->images)->map(function ($image) use ($task) {
+            [$file_name, $extension] = explode('.', $image->hashName());
+
+            Storage::disk('task_images')->put("$file_name.$extension", file_get_contents($image));
+
+            return [
+                'name' => $file_name,
+                'extension' => $extension,
+                'task_id' => $task->id,
+            ];
+        });
+
+        Images::insert($images->toArray());
 
         return to_route('task.index');
     }

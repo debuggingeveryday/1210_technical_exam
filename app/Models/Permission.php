@@ -48,6 +48,6 @@ class Permission extends SpatieRole
         self::CAN_ACCESS_TASK,
         self::CAN_VIEW_TASK,
         self::CAN_CHANGE_STATUS_TASK,
-        self::CAN_ACCESS_SHOW_TASK
+        self::CAN_ACCESS_SHOW_TASK,
     ];
 }

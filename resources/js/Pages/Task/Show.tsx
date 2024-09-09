@@ -23,10 +23,6 @@ export default function Show({ auth }: PageProps) {
     });
   };
 
-  useEffect(() => {
-    console.log(auth);
-  }, []);
-
   return (
     <AuthenticatedLayout
       user={auth.user}

@@ -20,10 +20,12 @@ Route::get('/', function () {
     return Inertia::render('Auth/Login');
 });
 
-Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
-Route::resource('/task', TaskController::class)->middleware(['auth', 'verified']);
-
-Route::put('/task/{task}/update-status', [TaskController::class, 'update_status'])->name('task.update-status');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
+    Route::resource('/task', TaskController::class);
+    Route::put('/task/{task}/update-status', [TaskController::class, 'update_status'])->name('task.update-status');
+    Route::post('/task/{task}/upload-files', [TaskController::class, 'upload_files'])->name('task.upload-files');
+});
 
 Route::get('/tasks/image/{image}', function ($image) {
     $path = storage_path("app/tasks/$image");
