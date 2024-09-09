@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Images;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
 class ImageSeeder extends Seeder
 {
@@ -12,6 +13,8 @@ class ImageSeeder extends Seeder
      */
     public function run(): void
     {
-        Images::factory()->create();
+        if (App::environment('local')) {
+            Images::factory()->create();
+        }
     }
 }

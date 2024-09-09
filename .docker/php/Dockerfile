@@ -1,5 +1,8 @@
 FROM php:8.3-fpm
 
+USER root
+RUN useradd -s /sbin/nologin user
+
 COPY php.ini /usr/local/etc/php/
 COPY docker.conf /usr/local/etc/php-fpm.d/docker.conf
 COPY .bashrc /root/
@@ -47,11 +50,15 @@ ENV COMPOSER_HOME /composer
 ENV PATH $PATH:/composer/vendor/bin
 RUN composer config --global process-timeout 3600
 RUN composer global require "laravel/installer"
+RUN chown -R user:user /composer
 
 WORKDIR /root
-RUN git clone https://github.com/seebi/dircolors-solarized
 
 EXPOSE 5173
 WORKDIR /var/www
 
-RUN chown -R www-data:www-data ./*
+RUN mkdir -p /home/user
+RUN chown -R user:user /home/user
+RUN chown -R user:user /var/www
+
+USER user
