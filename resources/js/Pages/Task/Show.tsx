@@ -12,20 +12,29 @@ import { MdOutlineSpeakerNotes } from 'react-icons/md';
 import { MdDone } from 'react-icons/md';
 import { trimString } from '@/util/string';
 import { CAN_DELETE_TASK } from '@/constants/constants';
+import { toast } from 'react-toastify';
 
 export default function Show({ auth }: PageProps) {
   const { task }: any = usePage().props;
   const USER_CAN_DELETE_TASK = auth.user.permissions.some(({ name }: any) => name === CAN_DELETE_TASK);
 
   const updateStatus = (status: string = '') => {
-    router.put(route('task.update-status', task.id), {
-      status,
-    });
+    router.put(
+      route('task.update-status', task.id),
+      {
+        status,
+      },
+      {
+        onSuccess: () => {
+          toast.success(`Status update to ${trimString(status)}`);
+        },
+      }
+    );
   };
 
-  useEffect(() => {
-    console.log(auth);
-  }, []);
+  const deleteTask = (id: number) => {
+    router.delete(route('task.destroy', id));
+  };
 
   return (
     <AuthenticatedLayout
@@ -42,11 +51,7 @@ export default function Show({ auth }: PageProps) {
           <div className="w-1/2 bg-white p-8 rounded-lg shadow-lg place-self-center grid grid-cols-1 gap-y-4">
             <div className="place-self-end">
               {USER_CAN_DELETE_TASK && (
-                <button
-                  className="text-red-500"
-                  type="button"
-                  onClick={() => router.delete(route('task.destroy', task.id))}
-                >
+                <button className="text-red-500" type="button" onClick={() => deleteTask(task.id)}>
                   <FaRegTrashAlt className="mt-1" />
                 </button>
               )}
