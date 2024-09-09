@@ -46,7 +46,7 @@ Assignee only can access - access task page, view task table, view task details,
 
 ### Follow up update
 
-Add docker-compose.yml update</br>
+Add docker-compose.yml update (Done)</br>
 Add notification every actions(Done)</br>
 Enhancement of web layouts</br>
 Add more browser test</br>
