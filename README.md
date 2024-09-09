@@ -2,7 +2,7 @@
 
 ## Installation
 
-### Steps
+### Building project
 ```
 git clone https://github.com/debuggingeveryday/1210_technical_exam.git
 cd 1210_technical_exam
